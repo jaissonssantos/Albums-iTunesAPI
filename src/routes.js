@@ -2,18 +2,16 @@ import React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
 import Main from './pages/Main';
-import Artist from './pages/Artist';
-import Albums from './pages/Albums';
+import Songs from './pages/Songs';
 
 export default function Routes() {
     return (
         <BrowserRouter>
             <Switch>
                 <Route path="/" exact component={Main} />
-                <Route path="/artist" component={Artist} />
                 <Route
-                    path="/albums/:artistId/:collectionId"
-                    component={Albums}
+                    path="/songs/:artistId/:collectionId"
+                    component={Songs}
                 />
             </Switch>
         </BrowserRouter>

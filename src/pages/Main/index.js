@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 
 import { Link } from 'react-router-dom';
 import { FaSearch, FaSpinner } from 'react-icons/fa';
+import { IoIosInformationCircleOutline } from 'react-icons/io';
 import logo from '../../assets/logo.svg';
-import { Container, Form, SubmitButton, List } from './styles';
+import Container from '../../components/Container';
+import { Form, SubmitButton, List } from './styles';
 
 import api from '../../services/api';
 import { formatPriceENUS } from '../../util/format';
@@ -12,7 +14,8 @@ export default class Main extends Component {
     state = {
         artists: '',
         results: [],
-        loading: false,
+        isLoading: false,
+        resultCount: false,
     };
 
     handlerSearchArtists = e => {
@@ -22,9 +25,9 @@ export default class Main extends Component {
     handlerSubmitForm = async e => {
         e.preventDefault();
 
-        this.setState({ loading: true });
+        this.setState({ isLoading: true });
 
-        const { artists, results } = this.state;
+        const { artists, results, resultCount } = this.state;
 
         const response = await api.get('/search', {
             params: {
@@ -40,13 +43,14 @@ export default class Main extends Component {
         }));
 
         this.setState({
-            results: [...data],
-            loading: false,
+            results: data,
+            isLoading: false,
+            resultCount: response.data.resultCount,
         });
     };
 
     render() {
-        const { artists, loading, results } = this.state;
+        const { artists, isLoading, results, resultCount } = this.state;
 
         return (
             <Container>
@@ -66,8 +70,8 @@ export default class Main extends Component {
                         onChange={this.handlerSearchArtists}
                     />
 
-                    <SubmitButton loading={loading}>
-                        {loading ? (
+                    <SubmitButton isLoading={isLoading}>
+                        {isLoading ? (
                             <FaSpinner color="#FFF" size={16} />
                         ) : (
                             <FaSearch color="#FFF" size={16} />
@@ -75,29 +79,45 @@ export default class Main extends Component {
                     </SubmitButton>
                 </Form>
 
-                <List>
-                    {results.map(albums => (
-                        <li key={String(albums.collectionId)}>
-                            <Link
-                                to={`/albums/${albums.artistId}/${albums.collectionId}`}
-                            >
-                                <img
-                                    src={albums.artworkUrl100}
-                                    alt={albums.artistName}
-                                />
-                                <div>
-                                    <strong>{albums.artistName}</strong>
-                                    <p>{albums.collectionName}</p>
-                                    <p>{albums.primaryGenreName}</p>
+                {results.length ? (
+                    <List>
+                        {results.map(albums => (
+                            <li key={String(albums.collectionId)}>
+                                <Link
+                                    to={`/songs/${albums.artistId}/${albums.collectionId}`}
+                                >
+                                    <img
+                                        src={albums.artworkUrl100}
+                                        alt={albums.artistName}
+                                    />
+                                    <div>
+                                        <strong>{albums.artistName}</strong>
+                                        <p>{albums.collectionName}</p>
+                                        <p>{albums.primaryGenreName}</p>
 
-                                    <abbr>
-                                        {albums.collectionPriceFormatted}
-                                    </abbr>
-                                </div>
-                            </Link>
-                        </li>
-                    ))}
-                </List>
+                                        <abbr>
+                                            {albums.collectionPriceFormatted}
+                                        </abbr>
+                                    </div>
+                                </Link>
+                            </li>
+                        ))}
+                    </List>
+                ) : (
+                    <></>
+                )}
+
+                {resultCount === 0 ? (
+                    <p className="notfound">
+                        <IoIosInformationCircleOutline color="#333" />
+                        <span>
+                            Nenhum resultado encontrado para seu critério de
+                            busca
+                        </span>
+                    </p>
+                ) : (
+                    <></>
+                )}
             </Container>
         );
     }

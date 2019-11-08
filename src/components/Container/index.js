@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const Container = styled.div`
+const Container = styled.div`
     max-width: 620px;
     background-color: #fff;
     border-radius: 4px;
@@ -9,14 +9,13 @@ export const Container = styled.div`
     margin: 60px auto;
 
     img {
-        width: 120px;
-        height: 120px;
+        width: 100%;
+        max-height: 120px;
         margin-bottom: 40px;
-        border-radius: 50%;
     }
 
     h1 {
-        font-size: 22px;
+        font-size: 50px;
         display: flex;
         flex-direction: row;
         align-items: center;
@@ -26,7 +25,8 @@ export const Container = styled.div`
         line-height: 1.15;
     }
 
-    p {
+    h2 {
+        font-size: 18px;
         display: flex;
         flex-direction: row;
         align-items: center;
@@ -35,4 +35,29 @@ export const Container = styled.div`
         font-weight: 300;
         color: #32323d !important;
     }
+
+    .notfound {
+        display: flex;
+        flex-direction: column;
+        justify-items: center;
+        align-items: center;
+        margin: 20px auto;
+
+        svg {
+            font-size: 42px !important;
+        }
+    }
+
+    @media (max-width: 480px) {
+        margin: 60px 15px !important;
+
+        h1 {
+            font-size: 30px !important;
+        }
+        h2 {
+            font-size: 16px !important;
+        }
+    }
 `;
+
+export default Container;
