@@ -1,9 +1,9 @@
-import React from "react";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import React from 'react';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
-import Main from "./pages/Main";
-import Artist from "./pages/Artist";
-import Albums from "./pages/Albums";
+import Main from './pages/Main';
+import Artist from './pages/Artist';
+import Albums from './pages/Albums';
 
 export default function Routes() {
     return (
@@ -11,7 +11,10 @@ export default function Routes() {
             <Switch>
                 <Route path="/" exact component={Main} />
                 <Route path="/artist" component={Artist} />
-                <Route path="/albums" component={Albums} />
+                <Route
+                    path="/albums/:artistId/:collectionId"
+                    component={Albums}
+                />
             </Switch>
         </BrowserRouter>
     );

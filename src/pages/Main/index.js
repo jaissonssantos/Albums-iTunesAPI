@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 
+import { Link } from 'react-router-dom';
 import { FaSearch, FaSpinner } from 'react-icons/fa';
 import logo from '../../assets/logo.svg';
 import { Container, Form, SubmitButton, List } from './styles';
 
 import api from '../../services/api';
+import { formatPriceENUS } from '../../util/format';
 
 export default class Main extends Component {
     state = {
@@ -27,18 +29,20 @@ export default class Main extends Component {
         const response = await api.get('/search', {
             params: {
                 term: artists,
-                limit: 10,
+                entity: 'album',
+                limit: 30,
             },
         });
 
+        const data = response.data.results.map(albums => ({
+            ...albums,
+            collectionPriceFormatted: formatPriceENUS(albums.collectionPrice),
+        }));
+
         this.setState({
-            results: [...response.data.results],
-            artists: '',
+            results: [...data],
             loading: false,
         });
-
-        // console.log(response.data);
-        console.log(this.state.results);
     };
 
     render() {
@@ -72,19 +76,25 @@ export default class Main extends Component {
                 </Form>
 
                 <List>
-                    {results.map(result => (
-                        <li key={String(result.artistId)}>
-                            <a href="#">
+                    {results.map(albums => (
+                        <li key={String(albums.collectionId)}>
+                            <Link
+                                to={`/albums/${albums.artistId}/${albums.collectionId}`}
+                            >
                                 <img
-                                    src={result.artworkUrl100}
-                                    alt={result.artistName}
+                                    src={albums.artworkUrl100}
+                                    alt={albums.artistName}
                                 />
                                 <div>
-                                    <strong>{result.artistName}</strong>
-                                    <p>{result.collectionName}</p>
-                                    <p>{result.primaryGenreName}</p>
+                                    <strong>{albums.artistName}</strong>
+                                    <p>{albums.collectionName}</p>
+                                    <p>{albums.primaryGenreName}</p>
+
+                                    <abbr>
+                                        {albums.collectionPriceFormatted}
+                                    </abbr>
                                 </div>
-                            </a>
+                            </Link>
                         </li>
                     ))}
                 </List>
